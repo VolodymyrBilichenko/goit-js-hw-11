@@ -1,2 +1,0 @@
-const e={search:document.querySelector(".search"),input:document.querySelector(".search-inp"),reset:document.querySelector(".reset"),searchBtn:document.querySelector(".search-sub")};e.input.addEventListener("click",(()=>{e.search.classList.add("active"),e.input.focus(),setTimeout((()=>{e.searchBtn.style.display="block"}),350)})),e.reset.addEventListener("click",(()=>{event.preventDefault(),e.searchBtn.style.display="none",e.search.classList.remove("active"),e.input.value=""}));
-//# sourceMappingURL=index.8fb155a2.js.map
