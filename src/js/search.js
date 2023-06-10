@@ -1,13 +1,23 @@
-const search = document.querySelector(".search");
-const input = document.querySelector(".search-inp");
-const reset = document.querySelector(".reset");
+const refs = {
+    search: document.querySelector(".search"),
+    input:  document.querySelector(".search-inp"),
+    reset: document.querySelector(".reset"),
+    searchBtn: document.querySelector('.search-sub')
+}
 
-input.addEventListener("click", () => {
-  search.classList.add("active");
-  input.focus();
+refs.input.addEventListener("click", () => {
+    refs.search.classList.add("active");
+    refs.input.focus();
+    
+    setTimeout(() => {
+        refs.searchBtn.style.display = 'block';
+    }, 350);
 });
 
-reset.addEventListener("click", () => {
-  search.classList.remove("active");
-  input.value = "";
+refs.reset.addEventListener("click", () => {
+    event.preventDefault();
+    
+    refs.searchBtn.style.display = 'none';
+    refs.search.classList.remove("active");
+    refs.input.value = "";
 });
