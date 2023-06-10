@@ -5,10 +5,6 @@ const refs = {
     searchBtn: document.querySelector('.search-sub')
 }
 
-refs.searchBtn.addEventListener('click', () => {
-    event.preventDefault();
-})
-
 refs.input.addEventListener("click", () => {
     refs.search.classList.add("active");
     refs.input.focus();
