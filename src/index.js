@@ -29,7 +29,7 @@ function appendArticle(hits) {
     return hits.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => {
         return `
             <div class="photo-card">
-                <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+                <img class="photo-card-img" src="${webformatURL}" alt="${tags}" loading="lazy" />
                 <div class="info">
                     <h3 class="txt-title">Tag: ${tags}</h3>
                     <p class="info-item">
