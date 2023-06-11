@@ -50,7 +50,7 @@ function appendArticle(hits) {
     }).join('');
 };
 
-function push(hits) {
-    const gfgf = appendArticle(hits);
-    refs.gallery.insertAdjacentHTML('beforeend', gfgf);
+function push(hits) { // виводимо на екран користувачу 
+    const appendArticleCard = appendArticle(hits);
+    refs.gallery.insertAdjacentHTML('beforeend', appendArticleCard);
 }  
