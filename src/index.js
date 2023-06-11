@@ -1,6 +1,8 @@
 import './js/search'
 import NewsApiService from './js/news-pixabay'
 import NewsApiService from './js/news-pixabay';
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 const refs = {
     form: document.querySelector('.search-form'),
@@ -18,39 +20,35 @@ function onSearchServ(evt) { // фун-я відправки запросу і �
     evt.preventDefault();
     newsApiService.query = evt.currentTarget.elements.searchQuery.value;
     newsApiService.resetPage();
-    newsApiService.fetchArticles().then(push);
+    newsApiService.fetchArticles().then(appendArticle);
 }
 
 function onLoadMore() {
-    newsApiService.fetchArticles().then(push);
+    newsApiService.fetchArticles().then(appendArticle);
 }
 
 function appendArticle(hits) {
-    return hits.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => {
-        return `
-            <div class="photo-card">
-                <img class="photo-card-img" src="${webformatURL}" alt="${tags}" loading="lazy" />
-                <div class="info">
-                    <h3 class="txt-title">Tag: ${tags}</h3>
-                    <p class="info-item">
-                    <b>Likes: ${likes}</b>
-                    </p>
-                    <p class="info-item">
-                    <b>Views: ${views}</b>
-                    </p>
-                    <p class="info-item">
-                    <b>Comments: ${comments}</b>
-                    </p>
-                    <p class="info-item">
-                    <b>Downloads: ${downloads}</b>
-                    </p>
-                </div>
-            </div>`
-
-    }).join('');
-};
-
-function push(hits) { // виводимо на екран користувачу 
-    const appendArticleCard = appendArticle(hits);
-    refs.gallery.insertAdjacentHTML('beforeend', appendArticleCard);
-}  
+  const photoCards = hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
+    return `
+      <div class="photo-card">
+        <a class="photo-lightbox" href="${largeImageURL}">
+          <img class="photo-card-img" src="${webformatURL}" alt="${tags}" loading="lazy" />
+        </a>
+        <div class="info">
+          <h3 class="txt-title">Tag: ${tags}</h3>
+          <p class="info-item"><b>Likes: ${likes}</b></p>
+          <p class="info-item"><b>Views: ${views}</b></p>
+          <p class="info-item"><b>Comments: ${comments}</b></p>
+          <p class="info-item"><b>Downloads: ${downloads}</b></p>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  refs.gallery.insertAdjacentHTML('beforeend', photoCards);
+  
+    const lightBoxImg = new SimpleLightbox('.gallery a', {
+        captionsData: 'alt',
+        captionsDelay: 300,
+    });
+}
