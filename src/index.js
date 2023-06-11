@@ -1,26 +1,56 @@
 import './js/search'
-
+import NewsApiService from './js/news-pixabay'
+import NewsApiService from './js/news-pixabay';
 
 const refs = {
     form: document.querySelector('.search-form'),
-    serchInp: document.querySelector('.search-inp'),
-    searchBtn: document.querySelector('.search-sub'),
+    // serchInp: document.querySelector('.search-inp'),
+    // searchBtn: document.querySelector('.search-sub'),
     gallery: document.querySelector('.gallery'),
     moreBtn: document.querySelector('.load-more'),
 }
-
-const MY_API_KEY = '37178508-b1640183771b73716106d46c3';
-const BASE_URL = 'https://pixabay.com/api/';
+const newsApiService = new NewsApiService();
 
 refs.form.addEventListener('submit', onSearchServ); // ставлю прослуховувача на кнопку і отримую данні з сервера
+refs.moreBtn.addEventListener('click', onLoadMore); // ставлю прослуховувача на кнопку для загрузки контенту (більше)
 
 function onSearchServ(evt) { // фун-я відправки запросу і отримання результату з сервера 
     evt.preventDefault();
-    const quantity = evt.currentTarget.elements.searchQuery.value;
-    const url = `${BASE_URL}?key=${MY_API_KEY}&q=${quantity}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40`;
-
-    fetch(url)
-        .then(response => response.json())
-        .then(console.log);
+    newsApiService.query = evt.currentTarget.elements.searchQuery.value;
+    newsApiService.resetPage();
+    newsApiService.fetchArticles().then(push);
 }
 
+function onLoadMore() {
+    newsApiService.fetchArticles().then(push);
+}
+
+function appendArticle(hits) {
+    return hits.map(({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => {
+        return `
+            <div class="photo-card">
+                <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+                <div class="info">
+                    <h3 class="txt-title">Tag: ${tags}</h3>
+                    <p class="info-item">
+                    <b>Likes: ${likes}</b>
+                    </p>
+                    <p class="info-item">
+                    <b>Views: ${views}</b>
+                    </p>
+                    <p class="info-item">
+                    <b>Comments: ${comments}</b>
+                    </p>
+                    <p class="info-item">
+                    <b>Downloads: ${downloads}</b>
+                    </p>
+                </div>
+            </div>`
+
+    }).join('');
+};
+
+function push(hits) {
+    const gfgf = appendArticle(hits);
+    refs.gallery.insertAdjacentHTML('beforeend', gfgf);
+}  
