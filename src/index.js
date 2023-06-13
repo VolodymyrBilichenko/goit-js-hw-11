@@ -6,8 +6,6 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 
 const refs = {
     form: document.querySelector('.search-form'),
-    // serchInp: document.querySelector('.search-inp'),
-    // searchBtn: document.querySelector('.search-sub'),
     gallery: document.querySelector('.gallery'),
     moreBtn: document.querySelector('.load-more'),
 }
@@ -18,6 +16,8 @@ refs.moreBtn.addEventListener('click', onLoadMore); // ставлю прослу
 
 function onSearchServ(evt) { // фун-я відправки запросу і отримання результату з сервера 
     evt.preventDefault();
+
+    clearAppendArticle();
     newsApiService.query = evt.currentTarget.elements.searchQuery.value;
     newsApiService.resetPage();
     newsApiService.fetchArticles().then(appendArticle);
@@ -51,4 +51,8 @@ function appendArticle(hits) {
         captionsData: 'alt',
         captionsDelay: 300,
     });
+}
+
+function clearAppendArticle() { // фун-я для очищення галереї при новому запиті
+    refs.gallery.innerHTML = '';
 }
