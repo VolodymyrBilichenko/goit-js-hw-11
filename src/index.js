@@ -16,8 +16,13 @@ refs.moreBtn.addEventListener('click', onLoadMore); // ставлю прослу
 
 function onSearchServ(evt) { // фун-я відправки запросу і отримання результату з сервера 
     evt.preventDefault();
-
+    
     newsApiService.query = evt.currentTarget.elements.searchQuery.value;
+
+    if (newsApiService.query.trim() === '') {
+        return alert('введи что-то')
+    }
+    
     newsApiService.resetPage();
     newsApiService.fetchArticles().then(appArticle => {
         clearAppendArticle();
@@ -25,7 +30,7 @@ function onSearchServ(evt) { // фун-я відправки запросу і �
     });
 }
 
-function onLoadMore() {
+function onLoadMore() { // фун-я для підгрузки сторінок
     newsApiService.fetchArticles().then(appendArticle);
 }
 

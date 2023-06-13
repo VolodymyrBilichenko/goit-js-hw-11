@@ -150,3 +150,12 @@ body {
     background-color: var(--accent-color);
     color: #fff;
 }
+
+.dis:disabled{
+    opacity: 0.6;
+    cursor: not-allowed;
+    &:hover{
+        color: var(--accent-color);
+        background-color: inherit;
+    }
+}

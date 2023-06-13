@@ -1,35 +1,35 @@
-export default class NewsApiService {
+export default class NewsApiService { // сервіс відповідає за запитом та за номером группи
     constructor() {
         this.article = '';
         this.page = 1;
     }
 
-    fetchArticles() {
+    fetchArticles() { // метод забирає статті за посиланням з сервера 
         console.log(this);
         const MY_API_KEY = '37178508-b1640183771b73716106d46c3';
         const BASE_URL = 'https://pixabay.com/api/';
 
         const url = `${BASE_URL}?key=${MY_API_KEY}&q=${this.article}&image_type=photo&orientation=horizontal&safesearch=true&per_page=5&page=${this.page}`;
 
-        return fetch(url) // стукаюсь до сервера з запитом 
+        return fetch(url) // повертаю результат 
             .then(response => response.json()) // відповідь від сервера форматую в json формат
-            .then(data => {
-                console.log(data);
+            .then(({hits}) => {
+                console.log(hits);
                 this.incrementPage();
 
-                return data.hits;
+                return hits; // повертаю статті
             });
     }
 
-    incrementPage() {
+    incrementPage() { // збільшує сторінку на один
         this.page += 1;
     }
 
-    resetPage() {
+    resetPage() { // скидує в вихідне положення
         this.page = 1;
     }
 
-    get query() { // роблю глобальну змінну для значення
+    get query() { // контролюю термін запиту (отримати\записати)
         return this.article
     }
 
