@@ -17,10 +17,12 @@ refs.moreBtn.addEventListener('click', onLoadMore); // ставлю прослу
 function onSearchServ(evt) { // фун-я відправки запросу і отримання результату з сервера 
     evt.preventDefault();
 
-    clearAppendArticle();
     newsApiService.query = evt.currentTarget.elements.searchQuery.value;
     newsApiService.resetPage();
-    newsApiService.fetchArticles().then(appendArticle);
+    newsApiService.fetchArticles().then(appArticle => {
+        clearAppendArticle();
+        appendArticle(appArticle);
+    });
 }
 
 function onLoadMore() {
