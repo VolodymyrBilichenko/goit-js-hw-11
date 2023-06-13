@@ -13,19 +13,9 @@ export default class NewsApiService { // сервіс відповідає за 
 
         const url = `${BASE_URL}?key=${MY_API_KEY}&q=${this.article}&image_type=photo&orientation=horizontal&safesearch=true&per_page=5&page=${this.page}`;
 
-        return axios.get(url).then(res => {
-            this.incrementPage();
-            return res.data;
-        });
-
-        // return fetch(url) // повертаю результат 
-        //     .then(response => response.json()) // відповідь від сервера форматую в json формат
-        //     .then(({hits, totalHits}) => {
-        //         console.log(hits);
-        //         this.incrementPage();
-
-        //         return {hits, totalHits}; // повертаю статті
-        //     });
+        const res = await axios.get(url);
+        this.incrementPage();
+        return res.data;
     }
 
     incrementPage() { // збільшує сторінку на один
@@ -44,3 +34,13 @@ export default class NewsApiService { // сервіс відповідає за 
         this.article = newArticle;
     }
 }
+
+
+
+/*
+    1. async - оголошує асинхронну ф-цію, a в свою чергу асинхронна ф-ція ЗАВЖДИ поверта проміс
+    2. await - не можна використовувати за межами асинхроної ф-ції
+    3. await - заморожує виконання асинхронної ф-ції поки проміс не перейде у стан Fullfilled або Rejected
+    4. await - повертає данні з промісу, а не сам проміс
+    5. async/await - потрібні для того щоб зробити імітацію синхронності в середині асинхронного коду 
+*/
