@@ -1,8 +1,8 @@
-import './js/search'
-import NewsApiService from './js/news-pixabay'
+import NewsApiService from './js/news-pixabay';
 import NewsApiService from './js/news-pixabay';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
+import Notiflix from 'notiflix';
 
 const refs = {
     form: document.querySelector('.search-form'),
@@ -21,21 +21,56 @@ function onSearchServ(evt) { // фун-я відправки запросу і �
     newsApiService.query = evt.currentTarget.elements.searchQuery.value;
 
     if (newsApiService.query.trim() === '') {
-        return alert('введи что-то')
+        Notiflix.Report.warning('заполни поле');
+        return;
     }
-    
+    Notiflix.Loading.pulse();
     refs.moreBtn.style.display = 'block';
     newsApiService.resetPage();
     clearAppendArticle();
-    onLoadMoreBtn();
-}
+    createMarkup();
+};
+
+function createMarkup() { // фун-я для створення контенту при сабміті
+    newsApiService.fetchArticles()
+        .then(({ hits, totalHits }) => {
+            Notiflix.Loading.remove();
+            if (hits.length === 0) {
+                Notiflix.Report.warning("Sorry, there are no images matching your search query. Please try again.");
+                return;
+            } appendArticle(hits);
+            refs.moreBtn.style.display = 'block';
+            Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+        }).catch(error => {
+            Notiflix.Report.failure('error');
+        })
+};
 
 function onLoadMoreBtn() { // фун-я для підгрузки сторінок
     refs.moreBtn.setAttribute('disabled', 'disabled');
-    newsApiService.fetchArticles().then(appArticle => {
-        appendArticle(appArticle);
-        refs.moreBtn.removeAttribute('disabled');
-    });
+    Notiflix.Loading.pulse();
+    newsApiService.fetchArticles()
+        .then(({hits, totalHits}) => {
+            Notiflix.Loading.remove();
+            totalHitsPage({hits, totalHits});
+            refs.moreBtn.removeAttribute('disabled');
+        }).catch(error => {
+            Notiflix.Report.failure('error');
+        });
+};
+
+function totalHitsPage({hits, totalHits}) { // фун-я для перевірки карток на сторінці та кінець контенту
+    const nextPage = newsApiService.page;
+    const maxPage = Math.ceil(totalHits / 5);
+    
+    if (nextPage > maxPage) {
+        appendArticle(hits);
+        refs.moreBtn.style.display = 'none';
+        Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+    } else {
+        appendArticle(hits);
+        Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+    }
 }
 
 function appendArticle(hits) { // формуємо картку та заповнюємо контентом
@@ -58,10 +93,10 @@ function appendArticle(hits) { // формуємо картку та запов�
   
   refs.gallery.insertAdjacentHTML('beforeend', photoCards);
   
-    const lightBoxImg = new SimpleLightbox('.gallery a', {
-        captionsData: 'alt',
-        captionsDelay: 300,
-    });
+  const lightBoxImg = new SimpleLightbox('.gallery a', {
+      captionsData: 'alt',
+      captionsDelay: 300,
+  });
 }
 
 function clearAppendArticle() { // фун-я для очищення галереї при новому запиті
