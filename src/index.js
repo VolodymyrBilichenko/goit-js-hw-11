@@ -9,10 +9,11 @@ const refs = {
     gallery: document.querySelector('.gallery'),
     moreBtn: document.querySelector('.load-more'),
 }
+
 const newsApiService = new NewsApiService();
 
 refs.form.addEventListener('submit', onSearchServ); // ставлю прослуховувача на кнопку і отримую данні з сервера
-refs.moreBtn.addEventListener('click', onLoadMore); // ставлю прослуховувача на кнопку для загрузки контенту (більше)
+refs.moreBtn.addEventListener('click', onLoadMoreBtn); // ставлю прослуховувача на кнопку для загрузки контенту (більше)
 
 function onSearchServ(evt) { // фун-я відправки запросу і отримання результату з сервера 
     evt.preventDefault();
@@ -23,18 +24,21 @@ function onSearchServ(evt) { // фун-я відправки запросу і �
         return alert('введи что-то')
     }
     
+    refs.moreBtn.style.display = 'block';
     newsApiService.resetPage();
+    clearAppendArticle();
+    onLoadMoreBtn();
+}
+
+function onLoadMoreBtn() { // фун-я для підгрузки сторінок
+    refs.moreBtn.setAttribute('disabled', 'disabled');
     newsApiService.fetchArticles().then(appArticle => {
-        clearAppendArticle();
         appendArticle(appArticle);
+        refs.moreBtn.removeAttribute('disabled');
     });
 }
 
-function onLoadMore() { // фун-я для підгрузки сторінок
-    newsApiService.fetchArticles().then(appendArticle);
-}
-
-function appendArticle(hits) {
+function appendArticle(hits) { // формуємо картку та заповнюємо контентом
   const photoCards = hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
     return `
       <div class="photo-card">
