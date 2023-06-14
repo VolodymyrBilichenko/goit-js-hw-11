@@ -7,32 +7,42 @@ export default class NewsApiService { // сервіс відповідає за 
     constructor() {
         this.article = '';
         this.page = 1;
-    }
+        this.perPage = 40;
+    };
     
     async fetchArticles() { // метод забирає статті за посиланням з сервера 
+        const url = BASE_URL;
+        
+        const params = {
+            key: MY_API_KEY,
+            q: this.article,
+            image_type: "photo",
+            orientation: "horizontal",
+            safesearch: true,
+            per_page: this.perPage,
+            page: this.page,
+        };
 
-        const url = `${BASE_URL}?key=${MY_API_KEY}&q=${this.article}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`;
-
-        const res = await axios.get(url);
+        const res = await axios.get(url, {params});
         this.incrementPage();
         return res.data;
-    }
+    };
 
     incrementPage() { // збільшує сторінку на один
         this.page += 1;
-    }
+    };
 
     resetPage() { // скидує в вихідне положення
         this.page = 1;
-    }
+    };
 
     get query() { // контролюю термін запиту (отримати\записати)
         return this.article
-    }
+    };
 
     set query(newArticle) {
         this.article = newArticle;
-    }
+    };
 }
 
 
