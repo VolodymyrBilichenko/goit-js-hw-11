@@ -10,7 +10,6 @@ export default class NewsApiService { // сервіс відповідає за 
     }
     
     async fetchArticles() { // метод забирає статті за посиланням з сервера 
-        console.log(this);
 
         const url = `${BASE_URL}?key=${MY_API_KEY}&q=${this.article}&image_type=photo&orientation=horizontal&safesearch=true&per_page=5&page=${this.page}`;
 
