@@ -40,6 +40,7 @@ async function createMarkup() { // фун-я для створення конт�
     } appendArticle(hits);
     refs.moreBtn.style.display = 'block';
     Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+    
     // newsApiService.fetchArticles()
     //     .then(({ hits, totalHits }) => {
     //         Notiflix.Loading.remove();
