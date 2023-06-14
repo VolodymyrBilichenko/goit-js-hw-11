@@ -84,7 +84,7 @@ function totalHitsPage({hits, totalHits}) { // фун-я для перевірк
         Notiflix.Report.warning("Sorry", "We're sorry, but you've reached the end of search results.");
     } else {
         appendMarkup(hits);
-        Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+        // Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     }
 };
 
