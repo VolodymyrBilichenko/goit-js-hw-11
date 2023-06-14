@@ -47,6 +47,7 @@ async function createMarkup() { // фун-я для створення конт�
         refs.moreBtn.style.display = 'block';
         if (hits.length === 0) {
             Notiflix.Report.warning("What is this?", "Sorry, there are no images matching your search query. Please try again.");
+            refs.moreBtn.style.display = 'none';
             return;
         } appendMarkup(hits);
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
