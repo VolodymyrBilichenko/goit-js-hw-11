@@ -25,47 +25,42 @@ function onSearchServ(evt) { // фун-я відправки запросу і �
         return;
     }
     Notiflix.Loading.pulse();
-    refs.moreBtn.style.display = 'block';
     newsApiService.resetPage();
     clearAppendArticle();
     createMarkup();
 };
 
 async function createMarkup() { // фун-я для створення контенту при сабміті
-    const { hits, totalHits } = await newsApiService.fetchArticles();
-    Notiflix.Loading.remove();
-    if (hits.length === 0) {
-        Notiflix.Report.warning("Sorry, there are no images matching your search query. Please try again.");
-        return;
-    } appendArticle(hits);
-    refs.moreBtn.style.display = 'block';
-    Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-    
-    // newsApiService.fetchArticles()
-    //     .then(({ hits, totalHits }) => {
-    //         Notiflix.Loading.remove();
-    //         if (hits.length === 0) {
-    //             Notiflix.Report.warning("Sorry, there are no images matching your search query. Please try again.");
-    //             return;
-    //         } appendArticle(hits);
-    //         refs.moreBtn.style.display = 'block';
-    //         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
-    //     }).catch(error => {
-    //         Notiflix.Report.failure('error');
-    //     })
+    try { 
+        const { hits, totalHits } = await newsApiService.fetchArticles();
+        Notiflix.Loading.remove();
+        refs.moreBtn.style.display = 'block';
+        if (hits.length === 0) {
+            Notiflix.Report.warning("Sorry, there are no images matching your search query. Please try again.");
+            refs.moreBtn.style.display = 'none';
+            return;
+        } appendArticle(hits);
+        Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
+    } catch (error) {
+        Notiflix.Loading.remove();
+        Notiflix.Report.failure('error');
+        throw new error;
+    }
 };
 
-function onLoadMoreBtn() { // фун-я для підгрузки сторінок
-    refs.moreBtn.setAttribute('disabled', 'disabled');
+async function onLoadMoreBtn() { // фун-я для підгрузки сторінок
     Notiflix.Loading.pulse();
-    newsApiService.fetchArticles()
-        .then(({hits, totalHits}) => {
-            Notiflix.Loading.remove();
-            totalHitsPage({hits, totalHits});
-            refs.moreBtn.removeAttribute('disabled');
-        }).catch(error => {
-            Notiflix.Report.failure('error');
-        });
+    refs.moreBtn.style.display = 'none';
+    try {
+        const { hits, totalHits } = await newsApiService.fetchArticles();
+        refs.moreBtn.style.display = 'block';
+        Notiflix.Loading.remove();
+        totalHitsPage({hits, totalHits});
+    } catch (error) {
+        Notiflix.Loading.remove();
+        Notiflix.Report.failure('error');
+        throw new error;
+    }
 };
 
 function totalHitsPage({hits, totalHits}) { // фун-я для перевірки карток на сторінці та кінець контенту
@@ -74,7 +69,6 @@ function totalHitsPage({hits, totalHits}) { // фун-я для перевірк
     
     if (nextPage > maxPage) {
         appendArticle(hits);
-        refs.moreBtn.style.display = 'none';
         Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
     } else {
         appendArticle(hits);

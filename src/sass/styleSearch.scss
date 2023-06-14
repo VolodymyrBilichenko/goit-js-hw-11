@@ -18,6 +18,7 @@ body {
     justify-content: center;
     height: 100vh;
     margin: 0;
+    padding-bottom: 30px;
 }
 
 .search {
@@ -104,7 +105,10 @@ body {
 
 
 
-
+.gallery-btn{
+    margin-top: 30px;
+    height: 51px;
+}
 .load-more{
     display: none;
     border: 5px solid var(--accent-color);
@@ -118,7 +122,6 @@ body {
     color: var(--accent-color);
     cursor: pointer;
     margin: 0 auto;
-    margin-top: 40px;
 }
 
 .load-more:hover{
