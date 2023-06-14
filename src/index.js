@@ -18,10 +18,11 @@ refs.moreBtn.addEventListener('click', onLoadMoreBtn); // ставлю прос�
 function onSearchServ(evt) { // фун-я відправки запросу і отримання результату з сервера 
     evt.preventDefault();
     
+    
     newsApiService.query = evt.currentTarget.elements.searchQuery.value;
 
     if (newsApiService.query.trim() === '') {
-        Notiflix.Report.warning('заполни поле');
+        Notiflix.Report.warning("Oooops...","Your field is completely empty, please fill me in and press search");
         return;
     }
     Notiflix.Loading.pulse();
@@ -36,10 +37,10 @@ async function createMarkup() { // фун-я для створення конт�
         Notiflix.Loading.remove();
         refs.moreBtn.style.display = 'block';
         if (hits.length === 0) {
-            Notiflix.Report.warning("Sorry, there are no images matching your search query. Please try again.");
+            Notiflix.Report.warning("What is this?", "Sorry, there are no images matching your search query. Please try again.");
             refs.moreBtn.style.display = 'none';
             return;
-        } appendArticle(hits);
+        } appendMarkup(hits);
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     } catch (error) {
         Notiflix.Loading.remove();
@@ -68,16 +69,19 @@ function totalHitsPage({hits, totalHits}) { // фун-я для перевірк
     const maxPage = Math.ceil(totalHits / 5);
     
     if (nextPage > maxPage) {
-        appendArticle(hits);
+        appendMarkup(hits);
         Notiflix.Notify.info("We're sorry, but you've reached the end of search results.");
+        refs.moreBtn.style.display = 'none';
+        Notiflix.Report.warning("Sorry", "We're sorry, but you've reached the end of search results.");
+        // throw new error;
     } else {
-        appendArticle(hits);
+        appendMarkup(hits);
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     }
 }
 
 function appendArticle(hits) { // формуємо картку та заповнюємо контентом
-  const photoCards = hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
+  return hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
     return `
       <div class="photo-card">
         <a class="photo-lightbox" href="${largeImageURL}">
@@ -93,13 +97,18 @@ function appendArticle(hits) { // формуємо картку та запов�
       </div>
     `;
   }).join('');
+}
+
+function appendMarkup(hits) {
+    const articleApp = appendArticle(hits);
+    refs.gallery.insertAdjacentHTML('beforeend', articleApp);
   
-  refs.gallery.insertAdjacentHTML('beforeend', photoCards);
-  
-  const lightBoxImg = new SimpleLightbox('.gallery a', {
+    const lightbox = new SimpleLightbox('.gallery a', {
       captionsData: 'alt',
       captionsDelay: 300,
-  });
+    });
+
+    lightbox.refresh();
 }
 
 function clearAppendArticle() { // фун-я для очищення галереї при новому запиті
