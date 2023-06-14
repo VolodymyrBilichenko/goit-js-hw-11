@@ -75,7 +75,7 @@ async function onLoadMoreBtn() { // фун-я для підгрузки стор
 
 function totalHitsPage({hits, totalHits}) { // фун-я для перевірки карток на сторінці та кінець контенту
     const nextPage = newsApiService.page;
-    const maxPage = Math.ceil(totalHits / 5);
+    const maxPage = Math.ceil(totalHits / 40);
     
     if (nextPage > maxPage) {
         appendMarkup(hits);
