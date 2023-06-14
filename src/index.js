@@ -52,9 +52,7 @@ async function createMarkup() { // фун-я для створення конт�
         } appendMarkup(hits);
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     } catch (error) {
-        Notiflix.Loading.remove();
-        Notiflix.Report.failure('error');
-        throw new error;
+        catchErr(error);
     }
 };
 
@@ -67,9 +65,7 @@ async function onLoadMoreBtn() { // фун-я для підгрузки стор
         Notiflix.Loading.remove();
         totalHitsPage({hits, totalHits});
     } catch (error) {
-        Notiflix.Loading.remove();
-        Notiflix.Report.failure('error');
-        throw new error;
+        catchErr(error);
     }
 };
 
@@ -84,7 +80,6 @@ function totalHitsPage({hits, totalHits}) { // фун-я для перевірк
         Notiflix.Report.warning("Sorry", "We're sorry, but you've reached the end of search results.");
     } else {
         appendMarkup(hits);
-        // Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     }
 };
 
@@ -122,3 +117,9 @@ function onEnter(evt) { // ф-ція для пошуку за ентером
         onSearchServ(evt);
     }
 }
+
+function catchErr(error) { // ф-ція визивається в місцях коли ловимо помилки
+    Notiflix.Loading.remove();
+    Notiflix.Report.failure("Error", error.message);
+    throw new error;
+};
