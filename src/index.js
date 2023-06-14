@@ -1,5 +1,4 @@
-import NewsApiService from './js/news-pixabay';
-import NewsApiService from './js/news-pixabay';
+import NewsApiService from './js/pixabayAPI';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import Notiflix from 'notiflix';
@@ -26,11 +25,11 @@ refs.form.addEventListener("keydown", onEnter); // ставлю прослухо
 function onSearchServ(evt) { // фун-я відправки запросу і отримання результату з сервера 
     evt.preventDefault();
     
-    newsApiService.query = evt.currentTarget.elements.searchQuery.value;
+    newsApiService.query = evt.currentTarget.elements.searchQuery.value.trim();
     
     refs.moreBtn.style.display = 'none';
 
-    if (newsApiService.query.trim() === '') {
+    if (newsApiService.query === '') {
         Notiflix.Report.warning("Oooops...","Your field is completely empty, please fill me in and press search");
         return;
     }
