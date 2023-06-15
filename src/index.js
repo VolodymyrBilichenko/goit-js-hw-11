@@ -50,6 +50,7 @@ async function createMarkup() { // фун-я для створення конт�
             refs.moreBtn.style.display = 'none';
             return;
         } appendMarkup(hits);
+        onePageLoadBtn(totalHits);
         Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     } catch (error) {
         catchErr(error);
@@ -63,7 +64,7 @@ async function onLoadMoreBtn() { // фун-я для підгрузки стор
         const { hits, totalHits } = await pixabayApiService.fetchArticles();
         refs.moreBtn.style.display = 'block';
         Notiflix.Loading.remove();
-        totalHitsPage({hits, totalHits});
+        totalHitsPage({ hits, totalHits });
     } catch (error) {
         catchErr(error);
     }
@@ -97,6 +98,14 @@ function clearAppendArticle() { // ф-ція для очищення галер�
 function onEnter(evt) { // ф-ція для пошуку за ентером
     if (evt.code === 'Enter') {
         onSearchServ(evt);
+    }
+}
+
+function onePageLoadBtn(totalHits) { // ф-ція яка перевіряє скільки сторінок з картками ми отримали і ящко тільки 1ст то LoadMoreBtn не відображається
+    const perPage = pixabayApiService.perPage;
+    if (totalHits < perPage) {
+        refs.moreBtn.style.display = 'none';
+        return;
     }
 }
 
