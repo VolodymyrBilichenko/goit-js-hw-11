@@ -25,7 +25,8 @@ export default class NewsApiService { // сервіс відповідає за 
 
         const res = await axios.get(url, {params});
         this.incrementPage();
-        return res.data;
+        const { hits, totalHits } = res.data;
+        return { hits, totalHits };
     };
 
     incrementPage() { // збільшує сторінку на один

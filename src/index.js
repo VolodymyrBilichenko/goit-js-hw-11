@@ -1,7 +1,8 @@
-import NewsApiService from './js/pixabayAPI';
+import PixabayApiService from './js/pixabayAPI';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import Notiflix from 'notiflix';
+import { appendArticle } from './js/createGallery';
 
 const lightbox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
@@ -15,7 +16,7 @@ const refs = {
     searchInp: document.querySelector('.search-inp'),
 };
 
-const newsApiService = new NewsApiService();
+const pixabayApiService = new PixabayApiService();
 
 refs.form.addEventListener('submit', onSearchServ); // ставлю прослуховувача на кнопку і отримую данні з сервера
 refs.moreBtn.addEventListener('click', onLoadMoreBtn); // ставлю прослуховувача на кнопку для загрузки контенту (більше)
@@ -25,23 +26,23 @@ refs.form.addEventListener("keydown", onEnter); // ставлю прослухо
 function onSearchServ(evt) { // фун-я відправки запросу і отримання результату з сервера 
     evt.preventDefault();
     
-    newsApiService.query = evt.currentTarget.elements.searchQuery.value.trim();
+    pixabayApiService.query = evt.currentTarget.elements.searchQuery.value.trim();
     
     refs.moreBtn.style.display = 'none';
 
-    if (newsApiService.query === '') {
+    if (pixabayApiService.query === '') {
         Notiflix.Report.warning("Oooops...","Your field is completely empty, please fill me in and press search");
         return;
     }
     Notiflix.Loading.pulse();
-    newsApiService.resetPage();
+    pixabayApiService.resetPage();
     clearAppendArticle();
     createMarkup();
 };
 
 async function createMarkup() { // фун-я для створення контенту при сабміті
     try { 
-        const { hits, totalHits } = await newsApiService.fetchArticles();
+        const { hits, totalHits } = await pixabayApiService.fetchArticles();
         Notiflix.Loading.remove();
         refs.moreBtn.style.display = 'block';
         if (hits.length === 0) {
@@ -59,7 +60,7 @@ async function onLoadMoreBtn() { // фун-я для підгрузки стор
     Notiflix.Loading.pulse();
     refs.moreBtn.style.display = 'none';
     try {
-        const { hits, totalHits } = await newsApiService.fetchArticles();
+        const { hits, totalHits } = await pixabayApiService.fetchArticles();
         refs.moreBtn.style.display = 'block';
         Notiflix.Loading.remove();
         totalHitsPage({hits, totalHits});
@@ -69,8 +70,8 @@ async function onLoadMoreBtn() { // фун-я для підгрузки стор
 };
 
 function totalHitsPage({hits, totalHits}) { // фун-я для перевірки карток на сторінці та кінець контенту
-    const nextPage = newsApiService.page;
-    const perPage = newsApiService.perPage;
+    const nextPage = pixabayApiService.page;
+    const perPage = pixabayApiService.perPage;
     const maxPage = Math.ceil(totalHits / perPage);
     
     if (nextPage > maxPage) {
@@ -81,25 +82,6 @@ function totalHitsPage({hits, totalHits}) { // фун-я для перевірк
     } else {
         appendMarkup(hits);
     }
-};
-
-function appendArticle(hits) { // формуємо картку та заповнюємо контентом
-  return hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
-    return `
-      <div class="photo-card">
-        <a class="photo-lightbox" href="${largeImageURL}">
-          <img class="photo-card-img" src="${webformatURL}" alt="${tags}" loading="lazy" />
-        </a>
-        <div class="info">
-          <h3 class="txt-title">Tag: ${tags}</h3>
-          <p class="info-item"><b>Likes: ${likes}</b></p>
-          <p class="info-item"><b>Views: ${views}</b></p>
-          <p class="info-item"><b>Comments: ${comments}</b></p>
-          <p class="info-item"><b>Downloads: ${downloads}</b></p>
-        </div>
-      </div>
-    `;
-  }).join('');
 };
 
 function appendMarkup(hits) {
@@ -121,5 +103,5 @@ function onEnter(evt) { // ф-ція для пошуку за ентером
 function catchErr(error) { // ф-ція визивається в місцях коли ловимо помилки
     Notiflix.Loading.remove();
     Notiflix.Report.failure("Error", error.message);
-    throw new error;
+    throw error;
 };
