@@ -16,6 +16,4 @@ export function appendArticle(hits) { // формуємо картку та за
             </div>
         `;
     }).join('');
-    
-
 };
